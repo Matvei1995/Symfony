@@ -1,22 +1,41 @@
 <?php
 
 namespace App\Entity;
-
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[ApiResource(
+    operations: [
+    new Get(
+    uriTemplate: '/user/{id}',
+    requirements: ['id' => '\d+'],
+    normalizationContext: ['groups' => 'user:item']),
+    new GetCollection(
+    uriTemplate: '/user',
+    normalizationContext: ['groups' => 'user:list']),
+    ],
+    order: ['id' => 'ASC', 'nom' => 'ASC'],
+    paginationEnabled: false,
+    )]
 class Utilisateur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['api','user:item','user:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['api','user:item','user:list'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['api','user:item','user:list'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 50)]
@@ -24,6 +43,10 @@ class Utilisateur
 
     #[ORM\Column(length: 100)]
     private ?string $password = null;
+
+    #[ORM\Column(length: 200)]
+    #[Groups(['api','user:item','user:list'])]
+    private ?string $urlImg = null;
 
     public function getId(): ?int
     {
@@ -76,5 +99,22 @@ class Utilisateur
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getUrlImg(): ?string
+    {
+        return $this->urlImg;
+    }
+
+    public function setUrlImg(string $urlImg): static
+    {
+        $this->urlImg = $urlImg;
+
+        return $this;
+    }
+
+    public function __toString() : string 
+    {
+        return $this->prenom . " " . $this->nom;
     }
 }

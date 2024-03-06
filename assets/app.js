@@ -7,4 +7,4 @@
  */
 import './styles/app.css';
 import './styles/app.tailwind.css';
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+import './preline.js'
